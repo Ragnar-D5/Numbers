@@ -1,0 +1,10 @@
+[package]
+name = "numbers"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+iced = {git = "https://github.com/iced-rs/iced.git", branch = "master", default-features = false, features = ["advanced", "canvas", "debug", "lazy", "wgpu", "tokio", "image", "svg"] }
+sipper = "0.1.0"
+iced_runtime = { git = "https://github.com/iced-rs/iced.git", branch = "master" }
+iced_wgpu = "0.13.5"
