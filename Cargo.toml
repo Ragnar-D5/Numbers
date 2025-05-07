@@ -12,3 +12,4 @@ png = "0.17.16"
 rand = "0.9.1"
 fast_image_resize = { version = "5.1.3", features = ["image"] }
 image = "0.25.6"
+tokio = "1.45.0"

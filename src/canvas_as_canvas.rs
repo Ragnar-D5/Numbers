@@ -49,10 +49,12 @@ impl Clone for Number {
 #[derive(Default)]
 pub struct InternalState {
     incomplete_line: Vec<Point>,
+    update_counter: u8,
 }
 #[derive(Debug, Clone)]
 pub enum CanvasMessage {
     LineComplete(Vec<Point>),
+    #[allow(dead_code)]
     RedrawRequested,
 }
 impl Program<CanvasMessage> for Number {
@@ -125,12 +127,14 @@ impl Program<CanvasMessage> for Number {
             iced::Event::Mouse(iced::mouse::Event::ButtonPressed(iced::mouse::Button::Left)) => {
                 *_state = Some(InternalState {
                     incomplete_line: vec![_cursor.position().expect("In bounds")],
+                    update_counter: 0,
                 });
                 Some(Action::capture())
             }
             iced::Event::Mouse(iced::mouse::Event::ButtonReleased(iced::mouse::Button::Left)) => {
                 if let Some(InternalState {
                     incomplete_line: vec,
+                    update_counter: _,
                 }) = _state.as_mut()
                 {
                     if vec.len() == 1 {
@@ -150,10 +154,17 @@ impl Program<CanvasMessage> for Number {
             iced::Event::Mouse(iced::mouse::Event::CursorMoved { position }) => {
                 if let Some(InternalState {
                     incomplete_line: vec,
+                    update_counter: update,
                 }) = _state.as_mut()
                 {
                     vec.push(*position);
-                    Some(Action::publish(CanvasMessage::RedrawRequested))
+                    *update += 1;
+                    if *update >= 10 {
+                        *update = 0;
+                        Some(Action::publish(CanvasMessage::RedrawRequested))
+                    } else {
+                        Some(Action::request_redraw())
+                    }
                 } else {
                     None
                 }
